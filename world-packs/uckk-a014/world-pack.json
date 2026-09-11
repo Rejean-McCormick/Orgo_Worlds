@@ -1,0 +1,92 @@
+{
+  "format": "orgo.world.pack.v1",
+  "world": {
+    "key": "uckk-a014",
+    "title": "UCKK A014 — Pilote pédagogique expérimental",
+    "description": "World de démonstration déterministe pour la vertical slice UCKK-A014.",
+    "synthetic": true,
+    "release": "demo-pack-v2"
+  },
+  "target": {
+    "product": "Orgo",
+    "injector_schema": "orgo.scenario.v1",
+    "default_api_url": "http://127.0.0.1:4000/api/v3",
+    "organization_key": "uckk-demo",
+    "write_boundary": "Orgo/tools/scenario-injector only"
+  },
+  "identifiers": {
+    "demo_id": "uckk-pedagogy-pilot-a014",
+    "assembly_ref": "UCKK-A014",
+    "motion_ref": "UCKK-M014",
+    "decision_ref": "UCKK-D009",
+    "archive_ref": "UCKK-ARCH-A014-D009",
+    "workflow_code": "uckk_pedagogy_pilot",
+    "case_external_reference": "uckk:assembly:A014:decision:D009:v1",
+    "canonical_correlation_id": "corr:uckk:A014:D009",
+    "runtime_correlation_id": "corr.uckk.A014.D009"
+  },
+  "checkpoint_order": [
+    "T-14",
+    "T-7",
+    "T0-pre",
+    "T0-post",
+    "J3",
+    "J30",
+    "J90",
+    "R1"
+  ],
+  "checkpoints": {
+    "T-14": {
+      "scenario": "scenarios/T-14.scenario.json",
+      "mutates_orgo": false
+    },
+    "T-7": {
+      "scenario": "scenarios/T-7.scenario.json",
+      "mutates_orgo": false
+    },
+    "T0-pre": {
+      "scenario": "scenarios/T0-pre.scenario.json",
+      "mutates_orgo": false
+    },
+    "T0-post": {
+      "scenario": "scenarios/T0-post.scenario.json",
+      "mutates_orgo": true
+    },
+    "J3": {
+      "scenario": "scenarios/J3.scenario.json",
+      "mutates_orgo": true
+    },
+    "J30": {
+      "scenario": "scenarios/J30.scenario.json",
+      "mutates_orgo": true
+    },
+    "J90": {
+      "scenario": "scenarios/J90.scenario.json",
+      "mutates_orgo": true
+    },
+    "R1": {
+      "scenario": "scenarios/R1.scenario.json",
+      "mutates_orgo": true
+    }
+  },
+  "invariants": [
+    "No A014 Case before UCKK-D009 is published.",
+    "Smart Vote never triggers the Orgo pilot by itself.",
+    "All fixtures are synthetic and non-PII.",
+    "Orgo_Worlds never writes Orgo directly; it delegates to Orgo Scenario Injector.",
+    "No runtime UUID is stored in world-pack scenario source files.",
+    "Replays use stable external references and idempotency keys."
+  ],
+  "source_docs": [
+    "docs/00_INDEX.md",
+    "docs/01_CANON_ET_AUTORITE.md",
+    "docs/02_SCENARIO_A014.md",
+    "docs/03_STATE_MACHINE.md",
+    "docs/04_ARCHITECTURE_ET_CONTRATS.md",
+    "docs/05_SEEDS_FIXTURES.md",
+    "docs/06_DEMO_UX_RUNBOOK.md",
+    "docs/07_IMPLEMENTATION_PLAN.md",
+    "docs/08_TESTS_ACCEPTANCE.md",
+    "docs/09_EVIDENCE_LEDGER.md"
+  ]
+}

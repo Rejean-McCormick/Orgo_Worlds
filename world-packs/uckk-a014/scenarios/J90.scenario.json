@@ -1,0 +1,71 @@
+{
+  "schema_version": "orgo.scenario.v1",
+  "scenario": {
+    "id": "uckk-a014.j90",
+    "title": "UCKK A014 — J90",
+    "description": "Injecte le finding synthétique J90 et clôt la tâche de reconsidération sans modifier le mandat UCKK.",
+    "synthetic": true,
+    "epistemic_status": "synthetic_demo_fixture",
+    "correlation_id": "corr.uckk.A014.D009"
+  },
+  "operations": [
+    {
+      "op": "find_case",
+      "ref": "case.a014",
+      "search": "UCKK Pedagogical Pilot A014",
+      "title": "Implement UCKK Pedagogical Pilot A014",
+      "metadata": {
+        "demo_id": "uckk-pedagogy-pilot-a014"
+      }
+    },
+    {
+      "op": "find_task",
+      "ref": "task.j90",
+      "case_ref": "case.a014",
+      "search": "Produce Day-90 reconsideration package",
+      "title": "Produce Day-90 reconsideration package"
+    },
+    {
+      "op": "create_signal",
+      "ref": "signal.j90",
+      "case_ref": "case.a014",
+      "idempotency_key": "uckk:A014:observation:J90:v1",
+      "input": {
+        "source": "api",
+        "external_reference": "uckk:moodle:A014:observation:J90:v1",
+        "type": "education_pilot_observation",
+        "category": "report",
+        "classification": "aggregate_observation",
+        "severity": "MODERATE",
+        "label": "2.11",
+        "title": "UCKK A014 — Day 90 reconsideration observation",
+        "description": "SYNTHETIC DEMO FIXTURE — coordinator role burden observation; not a scientific finding and not a policy decision.",
+        "payload": {
+          "demo_id": "uckk-pedagogy-pilot-a014",
+          "checkpoint": "day_90",
+          "finding": {
+            "code": "coordinator_role_burden",
+            "statement": "The coordinator role appears to absorb disproportionate follow-up work in several teams."
+          },
+          "governance_reconsideration_required": true,
+          "contains_personal_data": false,
+          "authority_effect": "none",
+          "synthetic": true,
+          "finding_status": "demo_observation_not_research_finding"
+        }
+      }
+    },
+    {
+      "op": "comment_task",
+      "task_ref": "task.j90",
+      "body": "DEMO FIXTURE — J90 package records coordinator_role_burden as an observation requiring human institutional reconsideration. It does not amend UCKK-D009.",
+      "visibility": "internal_only"
+    },
+    {
+      "op": "transition_task",
+      "task_ref": "task.j90",
+      "status": "COMPLETED",
+      "reason": "J90 reconsideration package prepared for UCKK human authority."
+    }
+  ]
+}

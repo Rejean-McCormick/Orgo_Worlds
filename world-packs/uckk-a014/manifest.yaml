@@ -1,0 +1,23 @@
+format: orgo.world.pack.v1
+world:
+  key: uckk-a014
+  title: "UCKK A014 — Pilote pédagogique expérimental"
+  release: demo-pack-v2
+  synthetic: true
+target:
+  product: Orgo
+  injector_schema: orgo.scenario.v1
+  default_api_url: http://127.0.0.1:4000/api/v3
+  organization_key: uckk-demo
+  write_boundary: Orgo/tools/scenario-injector only
+checkpoint_order: [T-14, T-7, T0-pre, T0-post, J3, J30, J90, R1]
+identifiers:
+  demo_id: uckk-pedagogy-pilot-a014
+  assembly_ref: UCKK-A014
+  motion_ref: UCKK-M014
+  decision_ref: UCKK-D009
+  archive_ref: UCKK-ARCH-A014-D009
+  workflow_code: uckk_pedagogy_pilot
+  case_external_reference: uckk:assembly:A014:decision:D009:v1
+  canonical_correlation_id: corr:uckk:A014:D009
+  runtime_correlation_id: corr.uckk.A014.D009

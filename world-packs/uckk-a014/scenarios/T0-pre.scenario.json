@@ -1,0 +1,21 @@
+{
+  "schema_version": "orgo.scenario.v1",
+  "scenario": {
+    "id": "uckk-a014.t0-pre",
+    "title": "UCKK A014 — T0-pre",
+    "description": "Précondition T0-pre: aucun Case A014 ne doit exister dans Orgo.",
+    "synthetic": true,
+    "epistemic_status": "synthetic_demo_fixture",
+    "correlation_id": "corr.uckk.A014.D009"
+  },
+  "operations": [
+    {
+      "op": "assert_case_absent",
+      "search": "UCKK Pedagogical Pilot A014",
+      "title": "Implement UCKK Pedagogical Pilot A014",
+      "metadata": {
+        "demo_id": "uckk-pedagogy-pilot-a014"
+      }
+    }
+  ]
+}

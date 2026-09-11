@@ -1,0 +1,48 @@
+{
+  "schema_version": "orgo.scenario.v1",
+  "scenario": {
+    "id": "uckk-a014.r1",
+    "title": "UCKK A014 — R1",
+    "description": "Ouvre le contexte opérationnel de reconsidération sans créer de nouvelle décision institutionnelle.",
+    "synthetic": true,
+    "epistemic_status": "synthetic_demo_fixture",
+    "correlation_id": "corr.uckk.A014.D009"
+  },
+  "operations": [
+    {
+      "op": "find_case",
+      "ref": "case.a014",
+      "search": "UCKK Pedagogical Pilot A014",
+      "title": "Implement UCKK Pedagogical Pilot A014",
+      "metadata": {
+        "demo_id": "uckk-pedagogy-pilot-a014"
+      }
+    },
+    {
+      "op": "create_signal",
+      "ref": "signal.r1",
+      "case_ref": "case.a014",
+      "idempotency_key": "uckk:A014:reconsideration:R1:v1",
+      "input": {
+        "source": "api",
+        "external_reference": "uckk:assembly:A014:reconsideration:R1:v1",
+        "type": "institutional_reconsideration_due",
+        "category": "request",
+        "classification": "governance_followup",
+        "severity": "MODERATE",
+        "label": "2.11",
+        "title": "UCKK A014 — Reconsideration R1 opened",
+        "description": "SYNTHETIC DEMO FIXTURE — next deliberation is open; no superseding Assembly decision exists yet.",
+        "payload": {
+          "demo_id": "uckk-pedagogy-pilot-a014",
+          "followup_topic_ref": "ethikos-topic:UCKK-A014-R1",
+          "prior_decision_ref": "UCKK-D009",
+          "new_decision_ref": null,
+          "authority": "UCKK Assembly",
+          "authority_effect": "none_until_new_decision_published",
+          "synthetic": true
+        }
+      }
+    }
+  ]
+}

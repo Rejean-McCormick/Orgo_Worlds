@@ -1,0 +1,68 @@
+{
+  "schema_version": "orgo.scenario.v1",
+  "scenario": {
+    "id": "uckk-a014.j3",
+    "title": "UCKK A014 — J3",
+    "description": "Injecte les observations synthétiques J3 dans le Case existant et clôt la tâche de checkpoint J3.",
+    "synthetic": true,
+    "epistemic_status": "synthetic_demo_fixture",
+    "correlation_id": "corr.uckk.A014.D009"
+  },
+  "operations": [
+    {
+      "op": "find_case",
+      "ref": "case.a014",
+      "search": "UCKK Pedagogical Pilot A014",
+      "title": "Implement UCKK Pedagogical Pilot A014",
+      "metadata": {
+        "demo_id": "uckk-pedagogy-pilot-a014"
+      }
+    },
+    {
+      "op": "find_task",
+      "ref": "task.j3",
+      "case_ref": "case.a014",
+      "search": "Verify Day-3 team formation and charters",
+      "title": "Verify Day-3 team formation and charters"
+    },
+    {
+      "op": "create_signal",
+      "ref": "signal.j3",
+      "case_ref": "case.a014",
+      "idempotency_key": "uckk:A014:observation:J3:v1",
+      "input": {
+        "source": "api",
+        "external_reference": "uckk:moodle:A014:observation:J3:v1",
+        "type": "education_pilot_observation",
+        "category": "update",
+        "classification": "aggregate_observation",
+        "severity": "MINOR",
+        "label": "2.11",
+        "title": "UCKK A014 — Day 3 aggregate observation",
+        "description": "SYNTHETIC DEMO FIXTURE — aggregate Moodle observation; no student PII.",
+        "payload": {
+          "demo_id": "uckk-pedagogy-pilot-a014",
+          "checkpoint": "day_3",
+          "teams_formed": 8,
+          "charters_accepted": 7,
+          "accessibility_reviews_open": 1,
+          "policy_changes": 0,
+          "contains_personal_data": false,
+          "authority_effect": "none",
+          "synthetic": true
+        }
+      }
+    },
+    {
+      "op": "transition_case",
+      "case_ref": "case.a014",
+      "status": "in_progress"
+    },
+    {
+      "op": "transition_task",
+      "task_ref": "task.j3",
+      "status": "COMPLETED",
+      "reason": "J3 aggregate observation recorded; no policy change inferred."
+    }
+  ]
+}

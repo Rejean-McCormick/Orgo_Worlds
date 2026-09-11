@@ -1,0 +1,84 @@
+{
+  "schema_version": "orgo.scenario.v1",
+  "scenario": {
+    "id": "uckk-a014.j30",
+    "title": "UCKK A014 — J30",
+    "description": "Injecte les observations synthétiques J30, clôt la revue opérationnelle et crée une IntegrationOperation Konnaxion publish.",
+    "synthetic": true,
+    "epistemic_status": "synthetic_demo_fixture",
+    "correlation_id": "corr.uckk.A014.D009"
+  },
+  "operations": [
+    {
+      "op": "find_case",
+      "ref": "case.a014",
+      "search": "UCKK Pedagogical Pilot A014",
+      "title": "Implement UCKK Pedagogical Pilot A014",
+      "metadata": {
+        "demo_id": "uckk-pedagogy-pilot-a014"
+      }
+    },
+    {
+      "op": "find_task",
+      "ref": "task.j30",
+      "case_ref": "case.a014",
+      "search": "Produce Day-30 process review",
+      "title": "Produce Day-30 process review"
+    },
+    {
+      "op": "create_signal",
+      "ref": "signal.j30",
+      "case_ref": "case.a014",
+      "idempotency_key": "uckk:A014:observation:J30:v1",
+      "input": {
+        "source": "api",
+        "external_reference": "uckk:moodle:A014:observation:J30:v1",
+        "type": "education_pilot_observation",
+        "category": "report",
+        "classification": "aggregate_observation",
+        "severity": "MODERATE",
+        "label": "2.11",
+        "title": "UCKK A014 — Day 30 process observation",
+        "description": "SYNTHETIC DEMO FIXTURE — workload and rubric clarification observations; policy remains unchanged.",
+        "payload": {
+          "demo_id": "uckk-pedagogy-pilot-a014",
+          "checkpoint": "day_30",
+          "workload_imbalance_reports": 6,
+          "peer_rubric_clarification_requests": 2,
+          "policy_changes": 0,
+          "contains_personal_data": false,
+          "authority_effect": "none",
+          "synthetic": true
+        }
+      }
+    },
+    {
+      "op": "transition_task",
+      "task_ref": "task.j30",
+      "status": "COMPLETED",
+      "reason": "J30 synthetic process review recorded; zero policy changes inferred by Orgo."
+    },
+    {
+      "op": "request_integration",
+      "ref": "integration.j30-impact",
+      "subject_ref": "case.a014",
+      "provider": "konnaxion",
+      "operation": "publish",
+      "idempotency_key": "uckk:A014:impact:J30:v1",
+      "request": {
+        "artifact_type": "impact_update",
+        "external_reference": "impact:UCKK-A014:day30:v1",
+        "demo_id": "uckk-pedagogy-pilot-a014",
+        "checkpoint": "day_30",
+        "synthetic": true,
+        "epistemic_status": "synthetic_demo_fixture",
+        "summary": {
+          "workload_imbalance_reports": 6,
+          "peer_rubric_clarification_requests": 2,
+          "policy_changes": 0
+        },
+        "authority_note": "operational observation only; does not modify UCKK-D009"
+      }
+    }
+  ]
+}
