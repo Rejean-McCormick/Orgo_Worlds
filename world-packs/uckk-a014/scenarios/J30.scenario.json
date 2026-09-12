@@ -79,6 +79,11 @@
         },
         "authority_note": "operational observation only; does not modify UCKK-D009"
       }
+    },
+    {
+      "op": "wait_integration",
+      "integration_ref": "integration.j30-impact",
+      "timeout_seconds": 60
     }
   ]
 }

@@ -18,6 +18,10 @@ from tkinter import messagebox, ttk
 ROOT = Path(__file__).resolve().parent
 PACKS = ROOT / "world-packs"
 DEFAULT_ORGO = Path(os.environ.get("ORGO_ROOT", str(ROOT.parent / "Orgo"))).resolve()
+TEST_API_URL = "http://127.0.0.1:4000/api/v3"
+TEST_ORGANIZATION = "orgo-e2e"
+TEST_EMAIL = "e2e@example.test"
+TEST_PASSWORD = "Orgo-Test!2026-Labo#47"
 
 
 def _hidden_kwargs() -> dict:
@@ -69,6 +73,7 @@ class App(tk.Tk):
         ttk.Button(actions,text="Valider",command=lambda:self._run("validate")).pack(side="left",padx=(0,6))
         ttk.Button(actions,text="Plan / Dry-run",command=lambda:self._run("plan")).pack(side="left",padx=6)
         ttk.Button(actions,text="Ouvrir dans Orgo Scenario Injector",command=self._open_injector).pack(side="left",padx=6)
+        ttk.Button(actions,text="Injecter TEST",command=self._inject_test).pack(side="left",padx=6)
         ttk.Button(actions,text="Ouvrir documentation",command=self._open_docs).pack(side="right",padx=(6,0))
 
         panel=ttk.LabelFrame(self,text="Détails / sortie",padding=8)
@@ -138,6 +143,55 @@ class App(tk.Tk):
         if err: self._write(err.rstrip()+"\n")
         if code: messagebox.showerror(self.title(),f"{command} a échoué (code {code}).")
 
+
+    def _inject_test(self) -> None:
+        try:
+            cli=self._injector_cli(); scenario=self._scenario()
+        except Exception as exc:
+            messagebox.showerror(self.title(),str(exc)); return
+
+        answer = messagebox.askyesno(
+            "Injection TEST",
+            "Cette action va écrire réellement dans Orgo TEST.\n\n"
+            f"Organisation : {TEST_ORGANIZATION}\n"
+            f"Compte : {TEST_EMAIL}\n"
+            f"Checkpoint : {self.checkpoint.get()}\n\n"
+            "Continuer ?",
+            icon="warning",
+        )
+        if not answer:
+            return
+
+        report = ROOT / "runtime" / "world-injections" / self.world.get() / f"{self.checkpoint.get()}.import-report.json"
+        report.parent.mkdir(parents=True, exist_ok=True)
+        env = os.environ.copy()
+        env["ORGO_SCENARIO_API_URL"] = TEST_API_URL
+        env["ORGO_SCENARIO_ORGANIZATION"] = TEST_ORGANIZATION
+        env["ORGO_SCENARIO_EMAIL"] = TEST_EMAIL
+        env["ORGO_SCENARIO_PASSWORD"] = TEST_PASSWORD
+        env.pop("ORGO_SCENARIO_TOKEN", None)
+
+        self._write(f"\n$ Scenario Injector TEST -> {TEST_ORGANIZATION} / {self.checkpoint.get()}\n")
+
+        def worker():
+            cp=subprocess.run(
+                ["node",str(cli),"inject",str(scenario),"--apply","--report",str(report)],
+                cwd=str(Path(self.orgo_root.get()).resolve()),
+                env=env,
+                stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,encoding="utf-8",errors="replace",
+                **_hidden_kwargs(),
+            )
+            self.after(0,lambda:self._finish_test(cp.returncode,cp.stdout,cp.stderr,report))
+        threading.Thread(target=worker,daemon=True).start()
+
+    def _finish_test(self,code:int,out:str,err:str,report:Path)->None:
+        if out: self._write(out.rstrip()+"\n")
+        if err: self._write(err.rstrip()+"\n")
+        if code:
+            messagebox.showerror(self.title(),f"Injection TEST échouée (code {code}).")
+        else:
+            messagebox.showinfo(self.title(),f"Injection TEST terminée.\n\nRapport :\n{report}")
+
     def _open_injector(self) -> None:
         try:
             root=Path(self.orgo_root.get()).resolve(); ui=root/"OrgoScenarioInjector.pyw"; scenario=self._scenario()
@@ -145,9 +199,21 @@ class App(tk.Tk):
             if os.name=="nt":
                 pyw=Path(sys.executable).with_name("pythonw.exe")
                 exe=str(pyw if pyw.exists() else sys.executable)
-                subprocess.Popen([exe,str(ui),"--scenario",str(scenario)],cwd=str(root),**_hidden_kwargs())
+                env = os.environ.copy()
+                env["ORGO_SCENARIO_API_URL"] = TEST_API_URL
+                env["ORGO_SCENARIO_ORGANIZATION"] = TEST_ORGANIZATION
+                env["ORGO_SCENARIO_EMAIL"] = TEST_EMAIL
+                env["ORGO_SCENARIO_PASSWORD"] = TEST_PASSWORD
+                env.pop("ORGO_SCENARIO_TOKEN", None)
+                subprocess.Popen([exe,str(ui),"--scenario",str(scenario)],cwd=str(root),env=env,**_hidden_kwargs())
             else:
-                subprocess.Popen([sys.executable,str(ui),"--scenario",str(scenario)],cwd=str(root))
+                env = os.environ.copy()
+                env["ORGO_SCENARIO_API_URL"] = TEST_API_URL
+                env["ORGO_SCENARIO_ORGANIZATION"] = TEST_ORGANIZATION
+                env["ORGO_SCENARIO_EMAIL"] = TEST_EMAIL
+                env["ORGO_SCENARIO_PASSWORD"] = TEST_PASSWORD
+                env.pop("ORGO_SCENARIO_TOKEN", None)
+                subprocess.Popen([sys.executable,str(ui),"--scenario",str(scenario)],cwd=str(root),env=env)
         except Exception as exc:
             messagebox.showerror(self.title(),str(exc))
 
