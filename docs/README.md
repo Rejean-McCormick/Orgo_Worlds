@@ -49,3 +49,7 @@ The supplied code snapshot contains the real Prisma schema, migrations, NestJS s
 ## Completion delivery reference — 2026-09-09
 
 The active implementation and its remaining external-contract boundaries are recorded in `IMPLEMENTATION_STATUS.md`. See `COMPLETION_DECISIONS.md` for durable processes, receipt predicates, Work scopes, identity and evidence semantics; `ARCHITECTURE_TO_CODE.md` for source ownership; `LOCAL_VALIDATION.md` for the final acceptance to run locally. Historical validation results do not validate the completion changes.
+
+## Interaction Kernel
+
+- `Technical-Reference/INTERACTION_KERNEL.md` — IK v1.1 boundary, World routing, artifacts, reliability and Da’at/Kristal integration.

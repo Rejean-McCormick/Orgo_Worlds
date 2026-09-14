@@ -12,6 +12,7 @@ import { InsightsService } from './modules/insights/insights.service';
 import { OutboxWorker } from './platform/outbox/worker.service';
 import { EscalationService } from './modules/orchestration/escalation.service';
 import { WorldsModule } from './modules/worlds/worlds.module';
+import { InteractionKernelModule } from './modules/interaction-kernel/interaction-kernel.module';
 @Module({
   imports: [
     PlatformModule,
@@ -20,6 +21,7 @@ import { WorldsModule } from './modules/worlds/worlds.module';
     IntakeModule,
     IdentityModule,
     WorldsModule,
+    InteractionKernelModule,
   ],
   providers: [
     EvidenceService,
@@ -42,6 +44,7 @@ import { WorldsModule } from './modules/worlds/worlds.module';
     OutboxWorker,
     EscalationService,
     WorldsModule,
+    InteractionKernelModule,
   ],
 })
 export class RuntimeModule {}

@@ -20,7 +20,7 @@ import {
 } from '../../platform/contracts';
 import { WorkService } from '../work/public';
 
-export const providers = ['kristal', 'konnaxion', 'architect', 'koa'] as const;
+export const providers = ['kristal', 'konnaxion', 'daat', 'architect', 'koa'] as const;
 export const operationInput = z
   .object({
     provider: z.enum(providers),

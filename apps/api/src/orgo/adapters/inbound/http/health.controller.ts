@@ -20,7 +20,7 @@ export class HealthController {
   @Get('dependencies') dependencies() {
     return {
       required: ['postgres'],
-      optional: ['spaces', 'kristal', 'konnaxion', 'architect', 'koa', 'smtp'],
+      optional: ['spaces', 'kristal', 'konnaxion', 'daat', 'architect', 'koa', 'smtp'],
     };
   }
 }

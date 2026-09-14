@@ -144,7 +144,7 @@ function StructuredFields({
           kind: ["related", "blocks", "duplicates", "follows"],
           channel: ["in_app", "email", "sms", "webhook"],
           scope_type: ["team", "location", "unit", "custom"],
-          provider: ["kristal", "konnaxion", "architect", "koa"],
+          provider: ["kristal", "konnaxion", "daat", "architect", "koa"],
           category: ["request", "incident", "alert", "update", "feedback"],
           role: [
             "complainant",

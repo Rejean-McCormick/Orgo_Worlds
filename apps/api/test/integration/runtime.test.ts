@@ -1354,3 +1354,119 @@ test('MIME envelope attachments remain accessible only through Signal authorizat
     404,
   );
 });
+
+test('Interaction Kernel accepts an idempotent Konnaxion DecisionRecord command into a World-owned workflow', async () => {
+  const worldKey = `ik-${randomUUID().slice(0, 8)}`;
+  const workflowCode = `governed-${randomUUID().slice(0, 8)}`;
+  const created = await api('control/worlds', 'POST', {
+    key: worldKey,
+    title: 'IK World',
+    description: 'Interaction Kernel integration fixture',
+    visibility: 'private',
+  });
+  assert.equal(created.status, 201, JSON.stringify(created));
+  const release = await api(`control/worlds/${worldKey}/releases`, 'POST', {
+    label: 'IK routing',
+    config: {
+      interaction_kernel: {
+        decision_execute: {
+          workflow_code: workflowCode,
+          label: '2.11',
+          type: 'governance_decision',
+          category: 'request',
+          severity: 'MODERATE',
+          title_prefix: 'Governed decision',
+        },
+      },
+    },
+  });
+  assert.equal(release.status, 201, JSON.stringify(release));
+  const promoted = await api(
+    `control/worlds/${worldKey}/releases/${release.data.id}/promote`,
+    'POST',
+  );
+  assert.equal(promoted.status, 201, JSON.stringify(promoted));
+  const workflow = await api(
+    `w/${worldKey}/workflows/${workflowCode}/versions`,
+    'POST',
+    {
+      rules: [
+        {
+          id: 'governed-decision',
+          match: { category: 'request' },
+          actions: [
+            {
+              type: 'CREATE_CASE',
+              input: { title: '$signal.title', label: '$signal.label' },
+            },
+          ],
+        },
+      ],
+    },
+  );
+  assert.equal(workflow.status, 201, JSON.stringify(workflow));
+
+  const idempotency = `decision:${randomUUID()}:rev-1:orgo:execute:v1`;
+  const decisionId = `KX-${randomUUID()}`;
+  const body: any = {
+    specversion: 'ik/1.1',
+    id: `ik-${randomUUID()}`,
+    class: 'command',
+    time: new Date().toISOString(),
+    profile: { id: 'governance.decision.execute', version: '1.0.0' },
+    source: { system: 'konnaxion', organization: tenant },
+    target: { system: 'orgo', organization: tenant, world: worldKey },
+    subject: { type: 'decision', id: decisionId },
+    correlation_id: `corr.${randomUUID()}`,
+    idempotency_key: idempotency,
+    authority: {
+      kind: 'governance-mandate',
+      claims: [`authority://konnaxion/decision/${decisionId}`],
+    },
+    data: { decision_revision: 'rev-1', effective_at: null },
+    artifact_refs: [
+      {
+        owner: { system: 'konnaxion', organization: tenant },
+        artifact_type: 'konnaxion.decision_record',
+        artifact_id: `konnaxion:decision-record:${decisionId}:rev-1`,
+        version: 'rev-1',
+        integrity: { algorithm: 'sha256', digest: `sha256:${'a'.repeat(64)}` },
+      },
+    ],
+  };
+  const first = await api(`w/${worldKey}/ik/interactions`, 'POST', body, idempotency);
+  assert.equal(first.status, 201, JSON.stringify(first));
+  assert.equal(first.data.status, 'accepted');
+  assert.equal(typeof first.data.data.request_fingerprint, 'string');
+  assert.equal(typeof first.data.external_reference, 'string');
+
+  let acceptedSignal = await db.signal.findUnique({
+    where: { id: first.data.external_reference },
+  });
+  for (let i = 0; i < 20 && acceptedSignal?.status !== 'PROCESSED'; i++) {
+    await worker.tick();
+    acceptedSignal = await db.signal.findUnique({
+      where: { id: first.data.external_reference },
+    });
+  }
+  assert.equal(acceptedSignal?.status, 'PROCESSED');
+  assert.equal(typeof acceptedSignal?.case_id, 'string');
+
+  const replay = await api(
+    `w/${worldKey}/ik/interactions`,
+    'POST',
+    { ...body, id: `ik-${randomUUID()}`, time: new Date(Date.now() + 1000).toISOString() },
+    idempotency,
+  );
+  assert.equal(replay.status, 201, JSON.stringify(replay));
+  assert.deepEqual(replay.data, first.data);
+
+  const divergent = await api(
+    `w/${worldKey}/ik/interactions`,
+    'POST',
+    { ...body, data: { decision_revision: 'rev-2', effective_at: null } },
+    idempotency,
+  );
+  assert.equal(divergent.status, 409, JSON.stringify(divergent));
+  assert.equal(divergent.error.code, 'IK_IDEMPOTENCY_CONFLICT');
+});

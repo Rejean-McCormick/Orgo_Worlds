@@ -15,6 +15,7 @@ import { KristalAdapter } from '../../integrations/kristal/kristal.adapter';
 import { KonnaxionAdapter } from '../../integrations/konnaxion/konnaxion.adapter';
 import { ArchitectAdapter } from '../../integrations/architect/architect.adapter';
 import { KoaAdapter } from '../../integrations/koa/koa.adapter';
+import { DaatAdapter } from '../../integrations/daat/daat.adapter';
 
 export function retryDelay(attempt: number, random = Math.random) {
   return (
@@ -27,6 +28,7 @@ export class OutboxWorker {
   readonly adapters: Record<string, IntegrationPort> = {
     kristal: new KristalAdapter(),
     konnaxion: new KonnaxionAdapter(),
+    daat: new DaatAdapter(),
     architect: new ArchitectAdapter(),
     koa: new KoaAdapter(),
   };

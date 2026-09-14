@@ -2234,6 +2234,65 @@ model IntegrationOperation {
 }
 
 // Durable product extensions. Polymorphic subjects are checked by Work before access.
+model ArtifactLink {
+  id String @id @default(uuid()) @db.Uuid
+  organization_id String @db.Uuid
+  world_id String @db.Uuid
+  world_release_id String @db.Uuid
+  subject_type String
+  subject_id String @db.Uuid
+  relation String
+  artifact_owner String
+  artifact_owner_organization String @default("")
+  artifact_owner_instance String @default("")
+  artifact_type String
+  artifact_id String
+  artifact_version String @default("")
+  digest String?
+  locator String?
+  metadata Json @default("{}") @db.JsonB
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  @@unique([organization_id, world_id, subject_type, subject_id, relation, artifact_owner, artifact_owner_organization, artifact_owner_instance, artifact_type, artifact_id, artifact_version], map: "artifact_links_identity_key")
+  @@index([organization_id, world_id, subject_type, subject_id, created_at])
+  @@index([artifact_owner, artifact_type, artifact_id])
+  @@map("artifact_links")
+  @@schema("public")
+}
+model BuildRecord {
+  id String @id @default(uuid()) @db.Uuid
+  organization_id String @db.Uuid
+  world_id String @db.Uuid
+  world_release_id String @db.Uuid
+  build_id String
+  status String
+  record Json @db.JsonB
+  record_hash String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @updatedAt @db.Timestamptz(6)
+  @@unique([organization_id, world_id, build_id])
+  @@index([organization_id, world_id, status, created_at])
+  @@map("build_records")
+  @@schema("public")
+}
+model ReleaseRecord {
+  id String @id @default(uuid()) @db.Uuid
+  organization_id String @db.Uuid
+  world_id String @db.Uuid
+  world_release_id String @db.Uuid
+  release_id String
+  revision Int
+  build_ref String
+  status String
+  record Json @db.JsonB
+  record_hash String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  @@unique([organization_id, world_id, release_id, revision])
+  @@index([organization_id, world_id, release_id, revision])
+  @@index([organization_id, world_id, status, created_at])
+  @@map("release_records")
+  @@schema("public")
+}
+
 model WorkAttachment {
   id String @id @default(uuid()) @db.Uuid
   organization_id String @db.Uuid
